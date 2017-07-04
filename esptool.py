@@ -415,7 +415,8 @@ class ELFFile:
             return
         self.symbols = {}
         try:
-            tool_nm = "C:\\Espressif\\xtensa-lx106-elf\\bin\\xtensa-lx106-elf-nm.exe"
+            #tool_nm = "C:\\Espressif\\xtensa-lx106-elf\\bin\\xtensa-lx106-elf-nm.exe"
+            tool_nm = "/home/bill/esp-open-sdk/xtensa-lx106-elf/bin/xtensa-lx106-elf-nm"
             if os.getenv('XTENSA_CORE') == 'lx106':
                 tool_nm = "xt-nm"
             proc = subprocess.Popen([tool_nm, self.name], stdout=subprocess.PIPE)

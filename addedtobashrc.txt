@@ -1,0 +1,6 @@
+export PATH=$HOME/esp-open-sdk/xtensa-lx106-elf/bin:$PATH
+export ESP_ROOT=$HOME/esp-open-sdk
+export XTENSA_TOOLS_ROOT=$HOME/esp-open-sdk/xtensa-lx106-elf/bin
+export SDK_BASE=$ESP_ROOT/SDK
+export WEB_BASE=$HOME/esp8266web
+

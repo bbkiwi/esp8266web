@@ -36,9 +36,11 @@ DEFAULTADDR := $(shell printf '0x%X\n' $$(($(SPI_SIZE)*1024 - 4*4096)))
 BLANKBIN := ./$(FIRMWAREDIR)/blank.bin
 #BLANKADDR := 0x7E000
 BLANKADDR := $(shell printf '0x%X\n' $$(($(SPI_SIZE)*1024 - 2*4096)))
+#CWD := $(HOME)/esp8266web/
 CWD ?=$(PDIR)
-WEB_BASE := $(subst \,/,$(CWD))
-
+#$(info $$CWD is [${CWD}])
+WEB_BASE ?= $(subst \,/,$(CWD))
+#$(info $$WEB_BASE is [${WEB_BASE}])
 # Base directory for the compiler
 XTENSA_TOOLS_ROOT ?= c:/Espressif/xtensa-lx106-elf/bin
 
@@ -57,6 +59,11 @@ OBJDUMP := $(XTENSA_TOOLS_ROOT)/xtensa-lx106-elf-objdump
 
 SDK_TOOLS	?= c:/Espressif/utils
 #ESPTOOL		?= $(SDK_TOOLS)/esptool
+ESPTOOL=/usr/bin/python $(ESP_ROOT)/esptool/esptool.py
+#ESPTOOL=/usr/bin/python $(WEB_BASE)/esptool.py #This fails!
+OVLTOOL=/usr/bin/python $(WEB_BASE)/ovls.py
+UPLOADTOOL=/usr/bin/python $(WEB_BASE)/uploader.py
+
 ESPTOOL	?= C:/Python27/python.exe $(WEB_BASE)esptool.py
 OVLTOOL ?= C:/Python27/python.exe $(WEB_BASE)ovls.py
 UPLOADTOOL ?= C:/Python27/python.exe $(WEB_BASE)uploader.py

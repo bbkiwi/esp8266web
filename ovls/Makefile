@@ -5,13 +5,16 @@
 #############################################################
 
 UPLOADOPTION = ./bin/sync.ovl http://atesp8266/fsupload
+#$(info $$CWD in start esp8266web/ovls/Makefile is [${CWD}])
 CWD?=../../
+#$(info $$CWD in esp8266web/ovls/Makefile is [${CWD}])
 WEB_BASE?=$(subst \,/,$(CWD))
-
+#$(info $$WEB_BASE in esp8266web/ovls/Makefile is [${WEB_BASE}])
 ADDR_FW1 = 0x00000
 ADDR_FW2 = 0x10000
 ESPOPTION ?= -p COM2 -b 256000
 GENIMAGEOPTION = -ff 80m -fm qio -fs 4m
+
 
 # Base directory for the compiler
 XTENSA_TOOLS_ROOT ?= c:/Espressif/xtensa-lx106-elf/bin
@@ -34,8 +37,17 @@ CCFLAGS += -Os -Wall -Wno-pointer-sign -fno-tree-ccp -mno-target-align -mno-seri
 #
 
 SDK_TOOLS	?= c:/Espressif/utils
+
+ESPTOOL=/usr/bin/python $(ESP_ROOT)/esptool/esptool.py
+#ESPTOOL=/usr/bin/python $(WEB_BASE)/esptool.py this fails
+UPLOADTOOL=/usr/bin/python $(WEB_BASE)/ovls/ovl_upload.py
+
 ESPTOOL		?= C:/Python27/python.exe $(WEB_BASE)esptool.py
 UPLOADTOOL  ?= C:/Python27/python.exe $(WEB_BASE)ovl_upload.py
+
+#$(info $$ESPTOOL in esp8266web/ovls/Makefile is [${ESPTOOL}])
+#$(info $$UPLOADTOOL in esp8266web/ovls/Makefile is [${UPLOADTOOL}])
+
 
 CSRCS ?= $(wildcard *.c)
 ASRCs ?= $(wildcard *.s)
@@ -43,6 +55,9 @@ ASRCS ?= $(wildcard *.S)
 SUBDIRS ?= $(patsubst %/,%,$(dir $(wildcard */Makefile)))
 
 FIRMWAREDIR := bin
+
+#$(info $$FIRMWAREDIR is [${FIRMWAREDIR}])
+#$(info $$GENIMAGEOPTION is [${GENIMAGEOPTION}])
 
 ODIR := .output
 OBJODIR := $(ODIR)/$(TARGET)/obj
@@ -107,7 +122,9 @@ endef
 
 $(BINODIR)/%.bin: $(IMAGEODIR)/%.out
 	@mkdir -p ../$(FIRMWAREDIR)
-	@$(ESPTOOL) elf2image -o ../$(FIRMWAREDIR)/ -es ovl_init $(GENIMAGEOPTION) $<
+	#@$(ESPTOOL) elf2image -o ../$(FIRMWAREDIR)/ -es ovl_init $(GENIMAGEOPTION) $< # -es is invalid
+	#@$(ESPTOOL) elf2image -o ../$(FIRMWAREDIR)/ -e1 ovl_init $(GENIMAGEOPTION) $<
+	@$(ESPTOOL) elf2image -o ../$(FIRMWAREDIR)/ -e1  $(GENIMAGEOPTION) $<
 	@mv -f ../bin/$(ADDR_FW1).bin ../bin/$(OUTNAME) 
 	@$(RM) ../bin/$(ADDR_FW2).bin
 
@@ -179,6 +196,6 @@ $(foreach lib,$(GEN_LIBS),$(eval $(call MakeLibrary,$(basename $(lib)))))
 
 $(foreach image,$(GEN_IMAGES),$(eval $(call MakeImage,$(basename $(image)))))
 
-INCLUDES := $(INCLUDES) -I $(PDIR)include -I $(WEB_BASE)include -I $(WEB_BASE)app/include
+INCLUDES := $(INCLUDES) -I $(PDIR)include -I $(WEB_BASE)/include -I $(WEB_BASE)/app/include
 #PDIR := ../$(PDIR)
 #sinclude $(PDIR)Makefile
